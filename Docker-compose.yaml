@@ -1,0 +1,40 @@
+services:
+  java-app:
+    image: mehmonxona:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    platform: Linux/amd64
+    container_name: mehmonxona
+    environment:
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: mehmonxona
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/mehmonxona
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_JPA_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+    depends_on:
+      - database
+    ports:
+      - "8080:8080"
+    networks:
+      - mehmonxona_network
+
+  database:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: mehmonxona
+    ports:
+      - "5432:5432"
+    networks:
+      - mehmonxona_network
+
+networks:
+  mehmonxona_network:
+    driver: bridge

@@ -1,6 +1,6 @@
 package uz.mehmonxona.managment.Mehmonxona.domain.dto.response;
 
-public class HotelRequestDTO {
+public class HotelResponseDTO {
     private Long id;
     private String name;
     private String address;
@@ -35,13 +35,6 @@ public class HotelRequestDTO {
     }
 
     public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public HotelRequestDTO(Long id, String name, String address, String phone) {
-        this.id = id;
-        this.name = name;
-        this.address = address;
         this.phone = phone;
     }
 }

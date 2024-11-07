@@ -1,23 +1,26 @@
-import React, { useState } from 'react';
-import { TextField, Button, Grid, Container, Typography, Box } from '@mui/material';
+import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axiosInstance from './AxiosInstance';
+import { AuthContext } from '../config/AuthContext';
+import { Box, Button, Container, Grid, TextField, Typography } from "@mui/material";
 
 const LoginPage = () => {
+  const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const navigate = useNavigate();
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handleLogin = async () => {
+    // Send login credentials to the backend API for authentication
+    // Assuming the backend will return a successful response (e.g., 200 OK)
     try {
-      //const response = await axiosInstance.post('/login', { username, password });
-      // Assuming successful login, navigate to the homepage
-      //if (response.status === 200) {
-        navigate('/home');
-      //}
+      // You can add a fetch or axios call here to authenticate the user with the backend
+
+      // After successful login, save credentials and navigate to the home page
+      login(username, password);
+      navigate('/home');
     } catch (error) {
-      console.error('Error logging in:', error);
+      console.error('Login failed:', error);
+      // Handle login failure (e.g., show error message)
     }
   };
 
@@ -27,7 +30,7 @@ const LoginPage = () => {
         <Typography variant="h4" component="h1" gutterBottom>
           Login
         </Typography>
-        <form onSubmit={handleSubmit} style={{ width: '100%' }}>
+        <form onSubmit={handleLogin} style={{ width: '100%' }}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextField

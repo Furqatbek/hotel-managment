@@ -12,7 +12,7 @@ public interface RoomService {
     public RoomResponseDTO getRoomById(Long id);
     public RoomResponseDTO createRoom(RoomRequestDTO room);
     public RoomResponseDTO getRoomByNumber(String number);
-    public RoomResponseDTO updateRoomByRoomNumber(String roomNumber);
+    public RoomResponseDTO updateRoomByRoomNumber(String roomNumber, RoomRequestDTO room);
     public void deleteRoomByRoomNumber(String roomNumber);
     public List<RoomResponseDTO> getAllAvailableRooms(Boolean available);
     public List<RoomResponseDTO> getAllRoomsByLevel(int level);

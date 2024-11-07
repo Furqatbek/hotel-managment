@@ -57,7 +57,7 @@ public class RoomController {
     }
 
     @PostMapping("/update/{number}")
-    public RoomResponseDTO updateRoomByRoomNumber(@PathVariable String number) {
-        return roomService.updateRoomByRoomNumber(number);
+    public RoomResponseDTO updateRoomByRoomNumber(@PathVariable String number, @RequestBody RoomRequestDTO room) {
+        return roomService.updateRoomByRoomNumber(number, room);
     }
 }

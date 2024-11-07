@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import uz.mehmonxona.managment.Mehmonxona.domain.dto.request.BookingRequestDTO;
 import uz.mehmonxona.managment.Mehmonxona.domain.dto.response.BookingResponseDTO;
 import uz.mehmonxona.managment.Mehmonxona.domain.entity.Booking;
+import uz.mehmonxona.managment.Mehmonxona.domain.entity.Customer;
 import uz.mehmonxona.managment.Mehmonxona.domain.enumeration.PaymentType;
 import uz.mehmonxona.managment.Mehmonxona.domain.enumeration.RoomTypes;
 import uz.mehmonxona.managment.Mehmonxona.repositories.BookingRepo;
@@ -25,6 +26,14 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingResponseDTO createBooking(BookingRequestDTO booking) {
+        if (customerRepo.getById(booking.getCustomer().getId()) == null) {
+            Customer newCustomer = new Customer();
+            newCustomer.setFirstName(booking.getCustomer().getFirstName());
+            newCustomer.setLastName(booking.getCustomer().getLastName());
+            newCustomer.setPhone(booking.getCustomer().getPhone());
+            newCustomer.setPassNumber(booking.getCustomer().getPassNumber());
+            customerRepo.save(newCustomer);
+        }
         Booking order = mappingToEntityBooking(booking);
         Booking newOrder = bookingRepo.save(order);
         return mappingToDtoBooking(newOrder);

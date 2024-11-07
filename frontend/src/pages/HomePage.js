@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Grid, Card, CardContent, Typography, Box, Button, TextField, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
-import axiosInstance from './AxiosInstance';
+import { Grid, Card, CardContent, Typography, Box, Button, FormControl, InputLabel, Select, MenuItem, CircularProgress } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const HomePage = () => {
   const [rooms, setRooms] = useState([]);
@@ -9,108 +9,38 @@ const HomePage = () => {
   const [cleaningFilter, setCleaningFilter] = useState('');
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState(null); // Error state
-
-  // useEffect(() => {
-  //   const fetchRooms = async () => {
-  //     try {
-  //       const response = await axiosInstance.get('/api/v1/rooms/all');
-  //       setRooms(response.data);
-  //       setLoading(false);
-  //     } catch (error) {
-  //       setError('Error fetching rooms');
-  //       setLoading(false);
-  //     }
-  //   };
-  //   fetchRooms();
-  // }, []);
+  const navigate = useNavigate();
+  const username = 'admin'; // Replace with your actual username
+  const password = 'password'; // Replace with your actual password
+  const credentials = btoa(`${username}:${password}`); // Base64 encode the username and password
 
   useEffect(() => {
-    // Hardcoded response (like calling the backend API)
-    const mockData = [
-      {
-        id: 1,
-        roomNumber: "1",
-        price: 34000.0,
-        available: true,
-        roomType: "BIR_KISHILIK",
-        capacity: 1,
-        cleaning: false,
-        level: 2,
-      },
-      {
-        id: 2,
-        roomNumber: "2",
-        price: 34000.0,
-        available: true,
-        roomType: "BIR_KISHILIK",
-        capacity: 1,
-        cleaning: false,
-        level: 2,
-      },
-      {
-        id: 1,
-        roomNumber: "1",
-        price: 34000.0,
-        available: true,
-        roomType: "BIR_KISHILIK",
-        capacity: 1,
-        cleaning: false,
-        level: 2,
-      },
-      {
-        id: 2,
-        roomNumber: "2",
-        price: 34000.0,
-        available: true,
-        roomType: "BIR_KISHILIK",
-        capacity: 1,
-        cleaning: false,
-        level: 2,
-      },
-      {
-        id: 1,
-        roomNumber: "1",
-        price: 34000.0,
-        available: true,
-        roomType: "BIR_KISHILIK",
-        capacity: 1,
-        cleaning: false,
-        level: 2,
-      },
-      {
-        id: 2,
-        roomNumber: "2",
-        price: 34000.0,
-        available: true,
-        roomType: "BIR_KISHILIK",
-        capacity: 1,
-        cleaning: true,
-        level: 2,
-      },
-      {
-        id: 1,
-        roomNumber: "1",
-        price: 34000.0,
-        available: true,
-        roomType: "BIR_KISHILIK",
-        capacity: 1,
-        cleaning: false,
-        level: 2,
-      },
-      {
-        id: 2,
-        roomNumber: "2",
-        price: 34000.0,
-        available: false,
-        roomType: "BIR_KISHILIK",
-        capacity: 1,
-        cleaning: false,
-        level: 2,
-      },
-    ];
+    const fetchRooms = async () => {
 
-    // Set the hardcoded data to state (this is like setting the response from an API)
-    setRooms(mockData);
+      try {
+        const response = await fetch('http://localhost:8080/api/v1/rooms/all', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Basic ${credentials}`, // Add the Authorization header
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setRooms(data);
+          setLoading(false);
+        } else {
+          setError('Error fetching rooms');
+          setLoading(false);
+        }
+      } catch (error) {
+        setError('Error fetching rooms');
+        setLoading(false);
+      }
+    };
+
+    fetchRooms();
   }, []);
 
   // Filter rooms based on selected filters
@@ -127,27 +57,77 @@ const HomePage = () => {
 
     setFilteredRooms(filteredData);
   };
- // if (loading) {
- //    return (
- //      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
- //        <CircularProgress />
- //      </Box>
- //    );
- //  }
- //
- //  if (error) {
- //    return (
- //      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
- //        <Typography variant="h6" color="error">{error}</Typography>
- //      </Box>
- //    );
- //  }
+
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+        <Typography variant="h6" color="error">{error}</Typography>
+      </Box>
+    );
+  }
 
   // Handler functions for the new buttons
-  const handleStartCleaning = (roomId) => {
-    console.log(`Starting cleaning for room ${roomId}`);
-    // Add logic to start cleaning the room (e.g., API call)
-  };
+  const handleStartCleaning = async (roomNumber) => {
+    console.log(`Starting cleaning for room ${roomNumber}`);
+    try {
+      const room = rooms.find(room => room.roomNumber === roomNumber);
+      const response = await fetch(`http://localhost:8080/api/v1/rooms/update/${roomNumber}`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Basic ${credentials}`, // Add the Authorization header
+        'Content-Type': 'application/json',
+    },
+      body: JSON.stringify({
+        ...room,
+        cleaning:true }),
+
+    });
+
+    if (response.ok) {
+      setRooms((prevRooms) =>
+      prevRooms.map((room) => room.roomNumber === roomNumber ? { ...room, cleaning: true} : room));
+    } else  {
+    setError('Error updating cleaning status');
+    }
+    } catch (error) {
+      setError('Error updating cleaning status')
+    }
+    }
+
+  const handleFinishCleaning = async (roomNumber) => {
+    console.log(`Finish cleaning for room ${roomNumber}`);
+    try {
+      const room = rooms.find(room => room.roomNumber === roomNumber);
+      const response = await fetch(`http://localhost:8080/api/v1/rooms/update/${roomNumber}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Basic ${credentials}`, // Add the Authorization header
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...room,
+          cleaning:false }),
+
+      });
+
+      if (response.ok) {
+        setRooms((prevRooms) =>
+          prevRooms.map((room) => room.roomNumber === roomNumber ? { ...room, cleaning: false} : room));
+      } else  {
+        setError('Error updating cleaning status');
+      }
+    } catch (error) {
+      setError('Error updating cleaning status')
+    }
+  }
 
   const handleCloseRoom = (roomId) => {
     console.log(`Closing room ${roomId}`);
@@ -239,7 +219,13 @@ const HomePage = () => {
                 </Typography>
               </CardContent>
               <Box sx={{ padding: 2 }}>
-                <Button variant="contained" color="primary" fullWidth>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  fullWidth
+                  disabled={!room.available} // Disabled if room is not available
+                  onClick={() => navigate('/booking')}
+                >
                   Бронировать
                 </Button>
                 <Box sx={{ marginTop: 2 }}>
@@ -247,9 +233,9 @@ const HomePage = () => {
                     variant="outlined"
                     color="secondary"
                     fullWidth
-                    onClick={() => handleStartCleaning(room.id)}
+                    onClick={() => room.cleaning ? handleFinishCleaning(room.roomNumber) : handleStartCleaning(room.roomNumber)}
                   >
-                    Начать уборку
+                    {room.cleaning ? 'Завершить уборку' : 'Начать уборку'}
                   </Button>
                 </Box>
                 <Box sx={{ marginTop: 2 }}>
@@ -270,5 +256,4 @@ const HomePage = () => {
     </Box>
   );
 };
-
 export default HomePage;

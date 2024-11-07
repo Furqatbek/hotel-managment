@@ -53,9 +53,16 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public RoomResponseDTO updateRoomByRoomNumber(String roomNumber) {
-        Room room = roomRepo.findByRoomNumber(roomNumber);
-        Room savedRoom = roomRepo.save(room);
+    public RoomResponseDTO updateRoomByRoomNumber(String roomNumber, RoomRequestDTO room) {
+        Room currentRoom = roomRepo.findByRoomNumber(roomNumber);
+        currentRoom.setRoomNumber(roomNumber);
+        currentRoom.setType(room.getRoomType());
+        currentRoom.setAvailable(room.getAvailable());
+        currentRoom.setPrice(room.getPrice());
+        currentRoom.setCleaning(room.getCleaning());
+        currentRoom.setLevel(room.getLevel());
+        currentRoom.setCapacity(room.getCapacity());
+        Room savedRoom = roomRepo.save(currentRoom);
         return mapToRoomResponseDTO(savedRoom);
     }
 

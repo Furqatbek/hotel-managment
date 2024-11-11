@@ -3,22 +3,11 @@ package uz.mehmonxona.managment.Mehmonxona.domain.dto.response;
 import uz.mehmonxona.managment.Mehmonxona.domain.enumeration.RoomTypes;
 
 public class RoomResponseDTO {
-    private Long id;
     private String roomNumber;
-    private Double price;
     private Boolean available;
     private RoomTypes roomType;
-    private int capacity;
     private Boolean cleaning;
-    private int level;
-
-    public Boolean getCleaning() {
-        return cleaning;
-    }
-
-    public void setCleaning(Boolean cleaning) {
-        this.cleaning = cleaning;
-    }
+    private Long id;
 
     public Long getId() {
         return id;
@@ -28,20 +17,20 @@ public class RoomResponseDTO {
         this.id = id;
     }
 
+    public Boolean getCleaning() {
+        return cleaning;
+    }
+
+    public void setCleaning(Boolean cleaning) {
+        this.cleaning = cleaning;
+    }
+
     public String getRoomNumber() {
         return roomNumber;
     }
 
     public void setRoomNumber(String roomNumber) {
         this.roomNumber = roomNumber;
-    }
-
-    public Double getPrice() {
-        return price;
-    }
-
-    public void setPrice(Double price) {
-        this.price = price;
     }
 
     public Boolean getAvailable() {
@@ -58,21 +47,5 @@ public class RoomResponseDTO {
 
     public void setRoomType(RoomTypes roomType) {
         this.roomType = roomType;
-    }
-
-    public int getCapacity() {
-        return capacity;
-    }
-
-    public void setCapacity(int capacity) {
-        this.capacity = capacity;
-    }
-
-    public int getLevel() {
-        return level;
-    }
-
-    public void setLevel(int level) {
-        this.level = level;
     }
 }

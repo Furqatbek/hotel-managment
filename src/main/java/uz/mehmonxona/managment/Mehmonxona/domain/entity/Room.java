@@ -14,26 +14,18 @@ public class Room {
     private RoomTypes type;
 
     private String roomNumber;
-    private Double price;
     private Boolean available;
-    private int capacity;
     private Boolean cleaning;
-    private int level;
 
-    @ManyToOne
-    @JoinColumn(name = "hotel_id")
-    private Hotel hotel;
-
-    public Room(Long id, String roomNumber, Double price, Boolean available, int capacity, Hotel hotel, Boolean cleaning, int level, RoomTypes type) {
-        this.id = id;
+    public Room(String roomNumber, Boolean available, Boolean cleaning, RoomTypes type) {
         this.roomNumber = roomNumber;
-        this.price = price;
         this.available = available;
-        this.capacity = capacity;
-        this.hotel = hotel;
         this.cleaning = cleaning;
-        this.level = level;
         this.type = type;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public Room() {
@@ -48,14 +40,6 @@ public class Room {
         this.cleaning = cleaning;
     }
 
-    public int getLevel() {
-        return level;
-    }
-
-    public void setLevel(int level) {
-        this.level = level;
-    }
-
     public RoomTypes getType() {
         return type;
     }
@@ -63,29 +47,12 @@ public class Room {
     public void setType(RoomTypes type) {
         this.type = type;
     }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getRoomNumber() {
         return roomNumber;
     }
 
     public void setRoomNumber(String roomNumber) {
         this.roomNumber = roomNumber;
-    }
-
-    public Double getPrice() {
-        return price;
-    }
-
-    public void setPrice(Double price) {
-        this.price = price;
     }
 
     public Boolean getAvailable() {
@@ -96,19 +63,4 @@ public class Room {
         this.available = available;
     }
 
-    public int getCapacity() {
-        return capacity;
-    }
-
-    public void setCapacity(int capacity) {
-        this.capacity = capacity;
-    }
-
-    public Hotel getHotel() {
-        return hotel;
-    }
-
-    public void setHotel(Hotel hotel) {
-        this.hotel = hotel;
-    }
 }

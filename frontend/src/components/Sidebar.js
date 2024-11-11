@@ -17,14 +17,14 @@ const Sidebar = () => {
       }}
     >
       <Box sx={{ padding: 2 }}>
-        <h3>Navigation</h3>
+        <h3>Emirates Plaza</h3>
       </Box>
       <List>
         <ListItem button component={Link} to="/home">
-          <ListItemText primary="Home" />
+          <ListItemText primary="Комнаты" />
         </ListItem>
         <ListItem button component={Link} to="/clients">
-          <ListItemText primary="Clients" />
+          <ListItemText primary="Клиенты" />
         </ListItem>
       </List>
     </Drawer>

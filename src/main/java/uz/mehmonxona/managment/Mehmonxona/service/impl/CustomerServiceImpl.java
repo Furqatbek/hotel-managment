@@ -71,7 +71,6 @@ public class CustomerServiceImpl implements CustomerService {
 
     public Customer mapToCustomer(CustomerRequestDTO customerResponseDTO) {
         Customer customer = new Customer();
-        customer.setId(customerResponseDTO.getId());
         customer.setFirstName(customerResponseDTO.getFirstName());
         customer.setLastName(customerResponseDTO.getLastName());
         customer.setPhone(customerResponseDTO.getPhone());

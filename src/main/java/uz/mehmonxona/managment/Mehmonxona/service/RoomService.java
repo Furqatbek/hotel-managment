@@ -14,7 +14,6 @@ public interface RoomService {
     public RoomResponseDTO getRoomByNumber(String number);
     public RoomResponseDTO updateRoomByRoomNumber(String roomNumber, RoomRequestDTO room);
     public void deleteRoomByRoomNumber(String roomNumber);
-    public List<RoomResponseDTO> getAllAvailableRooms(Boolean available);
-    public List<RoomResponseDTO> getAllRoomsByLevel(int level);
     public List<RoomResponseDTO> getRoomsByType(RoomTypes type);
+    public void saveRoom(RoomRequestDTO room);
 }

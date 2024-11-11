@@ -13,7 +13,14 @@ public class BookingResponseDTO {
     private LocalDateTime checkout;
     private Boolean payed;
     private Double amount;
-    private String roomType;
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getId() {
+        return id;
+    }
 
     public Boolean getPayed() {
         return payed;
@@ -29,22 +36,6 @@ public class BookingResponseDTO {
 
     public void setAmount(Double amount) {
         this.amount = amount;
-    }
-
-    public String getRoomType() {
-        return roomType;
-    }
-
-    public void setRoomType(String roomType) {
-        this.roomType = roomType;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public Customer getCustomer() {

@@ -31,16 +31,6 @@ public class RoomController {
         return roomService.getRoomByNumber(number);
     }
 
-    @GetMapping("/available/{b}")
-    public List<RoomResponseDTO> getRoomByBoolean(@PathVariable Boolean b) {
-        return roomService.getAllAvailableRooms(b);
-    }
-
-    @GetMapping("/level/{lvl}")
-    public List<RoomResponseDTO> getAllRoomsByLevel(@PathVariable int lvl) {
-        return roomService.getAllRoomsByLevel(lvl);
-    }
-
     @GetMapping("/type/{roomType}")
     public List<RoomResponseDTO> getAllRoomsByRoomType(@PathVariable String roomType) {
         return roomService.getRoomsByType(RoomTypes.fromString(roomType));

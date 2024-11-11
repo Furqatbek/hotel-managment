@@ -1,27 +1,70 @@
 import React, { useEffect, useState } from 'react';
-import { Grid, Card, CardContent, Typography, Box, Button, FormControl, InputLabel, Select, MenuItem, CircularProgress } from '@mui/material';
+import {
+  Grid,
+  Card,
+  CardContent,
+  Typography,
+  Box,
+  Button,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  CircularProgress,
+} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import CleaningServicesIcon from '@mui/icons-material/CleaningServices';
+import BookIcon from '@mui/icons-material/Book';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import OrderDetailsModal from "./OrderDetailsModal";
 
 const HomePage = () => {
   const [rooms, setRooms] = useState([]);
   const [filteredRooms, setFilteredRooms] = useState([]);
   const [availabilityFilter, setAvailabilityFilter] = useState('');
   const [cleaningFilter, setCleaningFilter] = useState('');
-  const [loading, setLoading] = useState(true); // Loading state
-  const [error, setError] = useState(null); // Error state
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const username = 'admin'; // Replace with your actual username
-  const password = 'password'; // Replace with your actual password
-  const credentials = btoa(`${username}:${password}`); // Base64 encode the username and password
+  const username = 'admin';
+  const password = 'password';
+  const credentials = btoa(`${username}:${password}`);
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [orderDetails, setOrderDetails] = useState(null);
+
+  const handleOpenModal = async (roomId) => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/v1/booking/search/by-room-id/${roomId}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Basic ${credentials}`,
+          'Content-Type': 'application/json',
+        },});
+      if (!response.ok) {
+        throw new Error('Network response was not ok')
+      }
+
+      const data = await response.json();
+      setOrderDetails(data);
+      setModalOpen(true);
+    } catch (error) {
+      console.error("Error fetching data", error);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setOrderDetails(null);
+  }
+
 
   useEffect(() => {
     const fetchRooms = async () => {
-
       try {
         const response = await fetch('http://localhost:8080/api/v1/rooms/all', {
           method: 'GET',
           headers: {
-            'Authorization': `Basic ${credentials}`, // Add the Authorization header
+            'Authorization': `Basic ${credentials}`,
             'Content-Type': 'application/json',
           },
         });
@@ -29,6 +72,7 @@ const HomePage = () => {
         if (response.ok) {
           const data = await response.json();
           setRooms(data);
+          setFilteredRooms(data); // Set filteredRooms to the fetched data
           setLoading(false);
         } else {
           setError('Error fetching rooms');
@@ -43,7 +87,11 @@ const HomePage = () => {
     fetchRooms();
   }, []);
 
-  // Filter rooms based on selected filters
+  // Apply filters when filter values change
+  useEffect(() => {
+    handleFilterChange();
+  }, [availabilityFilter, cleaningFilter]);
+
   const handleFilterChange = () => {
     let filteredData = rooms;
 
@@ -55,7 +103,51 @@ const HomePage = () => {
       filteredData = filteredData.filter(room => room.cleaning === (cleaningFilter === 'cleaning'));
     }
 
-    setFilteredRooms(filteredData);
+    setFilteredRooms(filteredData); // Update filteredRooms instead of rooms
+  };
+
+  const handleNewOrder = (room) => {
+    navigate('/booking', { state: { room } }); // Pass the specific room instead of all rooms
+  };
+
+  const handleCleaningStatusChange = async (roomNumber, startCleaning) => {
+    try {
+      const room = rooms.find((room) => room.roomNumber === roomNumber);
+      if (!room) {
+        setError(`Room ${roomNumber} not found.`);
+        return;
+      }
+
+      const response = await fetch(`http://localhost:8080/api/v1/rooms/update/${roomNumber}`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Basic ${credentials}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...room,
+          cleaning: startCleaning,
+        }),
+      });
+
+      if (response.ok) {
+        // Ensure state is updated with the new cleaning status
+        setRooms((prevRooms) =>
+          prevRooms.map((room) =>
+            room.roomNumber === roomNumber ? { ...room, cleaning: startCleaning } : room
+          )
+        );
+        setFilteredRooms((prevFilteredRooms) =>
+          prevFilteredRooms.map((room) =>
+            room.roomNumber === roomNumber ? { ...room, cleaning: startCleaning } : room
+          )
+        );
+      } else {
+        setError('Error updating cleaning status');
+      }
+    } catch (error) {
+      setError('Error updating cleaning status');
+    }
   };
 
   if (loading) {
@@ -69,76 +161,17 @@ const HomePage = () => {
   if (error) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
-        <Typography variant="h6" color="error">{error}</Typography>
+        <Typography variant="h6" color="error">
+          {error}
+        </Typography>
       </Box>
     );
   }
 
-  // Handler functions for the new buttons
-  const handleStartCleaning = async (roomNumber) => {
-    console.log(`Starting cleaning for room ${roomNumber}`);
-    try {
-      const room = rooms.find(room => room.roomNumber === roomNumber);
-      const response = await fetch(`http://localhost:8080/api/v1/rooms/update/${roomNumber}`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Basic ${credentials}`, // Add the Authorization header
-        'Content-Type': 'application/json',
-    },
-      body: JSON.stringify({
-        ...room,
-        cleaning:true }),
-
-    });
-
-    if (response.ok) {
-      setRooms((prevRooms) =>
-      prevRooms.map((room) => room.roomNumber === roomNumber ? { ...room, cleaning: true} : room));
-    } else  {
-    setError('Error updating cleaning status');
-    }
-    } catch (error) {
-      setError('Error updating cleaning status')
-    }
-    }
-
-  const handleFinishCleaning = async (roomNumber) => {
-    console.log(`Finish cleaning for room ${roomNumber}`);
-    try {
-      const room = rooms.find(room => room.roomNumber === roomNumber);
-      const response = await fetch(`http://localhost:8080/api/v1/rooms/update/${roomNumber}`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Basic ${credentials}`, // Add the Authorization header
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...room,
-          cleaning:false }),
-
-      });
-
-      if (response.ok) {
-        setRooms((prevRooms) =>
-          prevRooms.map((room) => room.roomNumber === roomNumber ? { ...room, cleaning: false} : room));
-      } else  {
-        setError('Error updating cleaning status');
-      }
-    } catch (error) {
-      setError('Error updating cleaning status')
-    }
-  }
-
-  const handleCloseRoom = (roomId) => {
-    console.log(`Closing room ${roomId}`);
-    // Add logic to close the room (e.g., API call)
-  };
-
   return (
-    <Box sx={{ padding: 3 }}>
-      {/* Filter Zone */}
+    <Box sx={{ padding: 2 }}>
       <Box sx={{ mb: 3, padding: 2, backgroundColor: '#f0f0f0', borderRadius: 2, boxShadow: 2 }}>
-        <Grid container spacing={3} justifyContent="space-between">
+        <Grid container spacing={2} justifyContent="space-between">
           <Grid item xs={12} sm={6} md={3}>
             <FormControl fullWidth>
               <InputLabel>Availability</InputLabel>
@@ -177,75 +210,72 @@ const HomePage = () => {
         </Grid>
       </Box>
 
-      <Grid container spacing={3} justifyContent="center">
-        {rooms.map((room) => (
-          <Grid item xs={12} sm={6} md={4} key={room.id}>
-            <Card sx={{
-              maxWidth: 345,
-              boxShadow: 3,
-              backgroundColor: room.cleaning
-                ? '#FFF3CD' // Light yellow if cleaning
-                : room.available
-                  ? 'white' // White if available
-                  : '#F8D7DA', // Light red if not available
-              border: room.cleaning
-                ? '2px solid #FFC107' // Yellow border if cleaning
-                : room.available
-                  ? 'none' // No border if available
-                  : '2px solid #D32F2F', // Red border if not available
-              transition: 'background-color 0.3s ease, border 0.3s ease', // Smooth transition
-            }}>
-              <CardContent>
-                <Typography variant="h5" component="div" gutterBottom>
+      <Grid container spacing={2} justifyContent="center">
+        {filteredRooms.map((room) => (
+          <Grid item xs={12} sm={6} md={3} key={room.id}>
+            <Card
+              sx={{
+                width: '100%',
+                boxShadow: 3,
+                backgroundColor: room.cleaning ? '#FFF3CD' : room.available ? '#DFF0D8' : '#F8D7DA',
+                border: room.cleaning
+                  ? '2px solid #FFC107'
+                  : room.available
+                    ? '2px solid #28A745'
+                    : '2px solid #D32F2F',
+                transition: 'background-color 0.3s ease, border 0.3s ease',
+              }}
+            >
+              <CardContent sx={{ padding: 1 }}>
+                <Typography variant="h6" gutterBottom>
                   Комната {room.roomNumber}
-                </Typography>
-                <Typography variant="body1" color="text.secondary">
-                  Цена: {room.price} сум
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                   Тип комната: {room.roomType}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Количество кроватов: {room.capacity} person(s)
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Этаж: {room.level}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Идет уборка: {room.cleaning ? 'Да' : 'Нет'}
+                  Нужно уборка: {room.cleaning ? 'Да' : 'Нет'}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                   Доступность: {room.available ? 'Доступно' : 'Не доступно'}
                 </Typography>
               </CardContent>
-              <Box sx={{ padding: 2 }}>
+              <Box sx={{ padding: 1 }}>
                 <Button
                   variant="contained"
                   color="primary"
                   fullWidth
-                  disabled={!room.available} // Disabled if room is not available
-                  onClick={() => navigate('/booking')}
+                  startIcon={<BookIcon />}
+                  disabled={!room.available}
+                  onClick={() => handleNewOrder(room)}
                 >
                   Бронировать
                 </Button>
-                <Box sx={{ marginTop: 2 }}>
+                <Box sx={{ marginTop: 1 }}>
+                  {
+                    room.cleaning && (
                   <Button
                     variant="outlined"
                     color="secondary"
                     fullWidth
-                    onClick={() => room.cleaning ? handleFinishCleaning(room.roomNumber) : handleStartCleaning(room.roomNumber)}
+                    startIcon={<CleaningServicesIcon />}
+                    onClick={() => handleCleaningStatusChange(room.roomNumber, !room.cleaning)}
                   >
-                    {room.cleaning ? 'Завершить уборку' : 'Начать уборку'}
+                    {room.cleaning ? 'Сделать уборку' : 'Завершить уборку'}
                   </Button>
+                    )
+                  }
                 </Box>
-                <Box sx={{ marginTop: 2 }}>
+                <Box sx={{ marginTop: 1 }}>
                   <Button
                     variant="outlined"
-                    color="error"
+                    color="info"
                     fullWidth
-                    onClick={() => handleCloseRoom(room.id)}
+                    disabled={room.available}
+                    startIcon={<VisibilityIcon />}
+                    onClick={() => handleOpenModal(room.id)} // Update button action
                   >
-                    Закрыть комнату
+                    Подробнее о заказе
                   </Button>
                 </Box>
               </Box>
@@ -256,4 +286,5 @@ const HomePage = () => {
     </Box>
   );
 };
+
 export default HomePage;

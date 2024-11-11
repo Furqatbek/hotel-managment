@@ -9,18 +9,34 @@ const LoginPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = async () => {
-    // Send login credentials to the backend API for authentication
-    // Assuming the backend will return a successful response (e.g., 200 OK)
-    try {
-      // You can add a fetch or axios call here to authenticate the user with the backend
+  // Define an async function to handle login
+  const handleLogin = async (e) => {
+    e.preventDefault();  // Prevent the default form submission
 
-      // After successful login, save credentials and navigate to the home page
-      login(username, password);
-      navigate('/home');
+    try {
+      const response = await fetch('http://localhost:8080/api/v1/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: username,
+          password: password,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Login failed');
+      }
+
+      const data = await response.text();
+      // Call login function in context with the obtained token or user data
+      login(data);  // Adjust if login function requires specific data format
+      navigate('/home');  // Navigate to home page after successful login
+
     } catch (error) {
       console.error('Login failed:', error);
-      // Handle login failure (e.g., show error message)
+      // Handle login failure (e.g., show an error message)
     }
   };
 

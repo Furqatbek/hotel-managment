@@ -10,14 +10,14 @@ import java.time.LocalDateTime;
 public class Booking {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name = "room_id")
     private Room room;
     private LocalDateTime checkin;
@@ -26,6 +26,23 @@ public class Booking {
     private PaymentType paymentType;
     private double amount;
     private Boolean paid;
+    private Boolean active;
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    public Long getId() {
+        return id;
+    }
 
     public PaymentType getPaymentType() {
         return paymentType;
@@ -58,14 +75,6 @@ public class Booking {
         this.room = room;
         this.checkin = checkin;
         this.checkout = checkout;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public Customer getCustomer() {

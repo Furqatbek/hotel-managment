@@ -9,6 +9,7 @@ import uz.mehmonxona.managment.Mehmonxona.domain.enumeration.RoomTypes;
 import uz.mehmonxona.managment.Mehmonxona.repositories.RoomRepo;
 import uz.mehmonxona.managment.Mehmonxona.service.RoomService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -16,14 +17,6 @@ public class RoomServiceImpl implements RoomService {
 
     @Autowired
     private RoomRepo roomRepo;
-
-    @Override
-    public List<RoomResponseDTO> getAllAvailableRooms(Boolean available) {
-        List<Room> rooms = roomRepo.findByAvailable(available);
-        return rooms.stream()
-                .map(this::mapToRoomResponseDTO)
-                .toList();
-    }
 
     @Override
     public List<RoomResponseDTO> getAllRooms() {
@@ -47,6 +40,11 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    public void saveRoom(RoomRequestDTO roomRequestDTO) {
+        Room savedRoom = roomRepo.save(mapToRoom(roomRequestDTO));
+    }
+
+    @Override
     public RoomResponseDTO getRoomByNumber(String number) {
         Room room = roomRepo.findByRoomNumber(number);
         return mapToRoomResponseDTO(room);
@@ -55,13 +53,8 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public RoomResponseDTO updateRoomByRoomNumber(String roomNumber, RoomRequestDTO room) {
         Room currentRoom = roomRepo.findByRoomNumber(roomNumber);
-        currentRoom.setRoomNumber(roomNumber);
-        currentRoom.setType(room.getRoomType());
         currentRoom.setAvailable(room.getAvailable());
-        currentRoom.setPrice(room.getPrice());
         currentRoom.setCleaning(room.getCleaning());
-        currentRoom.setLevel(room.getLevel());
-        currentRoom.setCapacity(room.getCapacity());
         Room savedRoom = roomRepo.save(currentRoom);
         return mapToRoomResponseDTO(savedRoom);
     }
@@ -71,14 +64,6 @@ public class RoomServiceImpl implements RoomService {
         Room room = roomRepo.findByRoomNumber(roomNumber);
         roomRepo.delete(room);
     }
-
-    @Override
-    public List<RoomResponseDTO> getAllRoomsByLevel(int level) {
-        return roomRepo.findAllByLevel(level).stream()
-                .map(this::mapToRoomResponseDTO)
-                .toList();
-    }
-
     @Override
     public List<RoomResponseDTO> getRoomsByType(RoomTypes roomTypes) {
         return roomRepo.getAllByType(roomTypes)
@@ -89,13 +74,9 @@ public class RoomServiceImpl implements RoomService {
 
     private Room mapToRoom(RoomRequestDTO roomRequestDTO) {
         Room room = new Room();
-        room.setId(roomRequestDTO.getId());
         room.setRoomNumber(roomRequestDTO.getRoomNumber());
         room.setAvailable(true);
-        room.setLevel(roomRequestDTO.getLevel());
-        room.setCapacity(roomRequestDTO.getCapacity());
         room.setCleaning(false);
-        room.setPrice(roomRequestDTO.getPrice());
         room.setType(roomRequestDTO.getRoomType());
         return room;
     }
@@ -105,10 +86,7 @@ public class RoomServiceImpl implements RoomService {
         dto.setId(room.getId());
         dto.setRoomNumber(room.getRoomNumber());
         dto.setAvailable(room.getAvailable());
-        dto.setLevel(room.getLevel());
-        dto.setCapacity(room.getCapacity());
         dto.setCleaning(room.getCleaning());
-        dto.setPrice(room.getPrice());
         dto.setRoomType(room.getType());
         return dto;
     }

@@ -1,11 +1,11 @@
 package uz.mehmonxona.managment.Mehmonxona.domain.dto.response;
 
 public class CustomerResponseDTO {
-    private Long id;
     private String firstName;
     private String lastName;
     private String phone;
     private String passNumber;
+    private Long id;
 
     public Long getId() {
         return id;

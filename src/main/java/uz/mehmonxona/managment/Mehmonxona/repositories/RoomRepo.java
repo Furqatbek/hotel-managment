@@ -9,7 +9,6 @@ import java.util.List;
 
 public interface RoomRepo extends JpaRepository<Room, Long> {
     Room findByRoomNumber(String number);
-    List<Room> findAllByLevel(int level);
     List<Room> findByAvailable(Boolean available);
 
     List<Room> getAllByType(RoomTypes type);

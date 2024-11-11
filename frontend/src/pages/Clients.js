@@ -17,7 +17,7 @@ const Clients = () => {
     const fetchClients = async () => {
 
       try {
-        const response = await fetch('localhost:8080/api/v1/customers/all', {
+        const response = await fetch('http://localhost:8080/api/v1/customers/all', {
           method: 'GET',
           headers: {
             'Authorization': `Basic ${credentials}`, // Add the Authorization header
@@ -55,9 +55,6 @@ const Clients = () => {
 
   return (
     <Box sx={{ padding: 3 }}>
-      <Typography variant="h4" gutterBottom>
-        Client List
-      </Typography>
 
       {/* Filter Zone */}
       <Box sx={{ marginBottom: 3 }}>

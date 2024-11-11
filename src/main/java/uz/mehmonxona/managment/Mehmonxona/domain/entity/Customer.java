@@ -1,15 +1,12 @@
 package uz.mehmonxona.managment.Mehmonxona.domain.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "customer")
 public class Customer {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String firstName;
@@ -17,22 +14,11 @@ public class Customer {
     private String phone;
     private String passNumber;
 
-    public Customer() {}
-    public Customer(String firstName, String lastName, String phone, String passNumber) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.phone = phone;
-        this.passNumber = passNumber;
-    }
-
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
+    public Customer() {}
     public String getFirstName() {
         return firstName;
     }

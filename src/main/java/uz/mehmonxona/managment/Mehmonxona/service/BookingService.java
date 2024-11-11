@@ -12,6 +12,8 @@ public interface BookingService {
     public List<BookingResponseDTO> getAllBookings();
     public BookingResponseDTO updateBooking(BookingRequestDTO booking);
     public void deleteBooking(BookingRequestDTO booking);
+public void updateExpiredBooking();
+    public BookingResponseDTO getBookingByRoomId(Long id);
     //public List<BookingResponseDTO> getAllBookingsByUserId(Long userId);
     //public List<BookingResponseDTO> getAllUnpaidBookings();
  }

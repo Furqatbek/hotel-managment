@@ -1,10 +1,13 @@
 package uz.mehmonxona.managment.Mehmonxona.domain.enumeration;
 
 public enum RoomTypes {
-    BIR_KISHILIK,
-    IKKI_KISHILIK,
-    UCH_KISHILIK,
-    TORT_KISHILIK;
+    ONE,
+    TWIN,
+    DOUBLE,
+    TRIPLE_LUXE,
+    DOUBLE_LUXE,
+    TWIN_LUXE,
+    FAMILY;
 
     public static RoomTypes fromString(String string) {
         for (RoomTypes type : RoomTypes.values()) {

@@ -3,21 +3,16 @@ package uz.mehmonxona.managment.Mehmonxona.domain.dto.request;
 import uz.mehmonxona.managment.Mehmonxona.domain.enumeration.RoomTypes;
 
 public class RoomRequestDTO {
-    private Long id;
     private String roomNumber;
-    private Double price;
     private Boolean available;
     private RoomTypes roomType;
-    private int capacity;
     private Boolean cleaning;
-    private int level;
 
-    public int getLevel() {
-        return level;
-    }
-
-    public void setLevel(int level) {
-        this.level = level;
+    public RoomRequestDTO(String roomNumber, Boolean available, RoomTypes roomType, Boolean cleaning) {
+        this.roomNumber = roomNumber;
+        this.available = available;
+        this.roomType = roomType;
+        this.cleaning = cleaning;
     }
 
     public Boolean getCleaning() {
@@ -28,28 +23,12 @@ public class RoomRequestDTO {
         this.cleaning = cleaning;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getRoomNumber() {
         return roomNumber;
     }
 
     public void setRoomNumber(String roomNumber) {
         this.roomNumber = roomNumber;
-    }
-
-    public Double getPrice() {
-        return price;
-    }
-
-    public void setPrice(Double price) {
-        this.price = price;
     }
 
     public Boolean getAvailable() {
@@ -66,13 +45,5 @@ public class RoomRequestDTO {
 
     public void setRoomType(RoomTypes roomType) {
         this.roomType = roomType;
-    }
-
-    public int getCapacity() {
-        return capacity;
-    }
-
-    public void setCapacity(int capacity) {
-        this.capacity = capacity;
     }
 }

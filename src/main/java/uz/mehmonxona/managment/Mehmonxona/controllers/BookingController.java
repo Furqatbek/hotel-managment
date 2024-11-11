@@ -9,7 +9,7 @@ import uz.mehmonxona.managment.Mehmonxona.service.BookingService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/booking ")
+@RequestMapping("/api/v1/booking")
 public class BookingController {
 
     @Autowired
@@ -23,6 +23,11 @@ public class BookingController {
     @GetMapping("/all")
     public List<BookingResponseDTO> getAllBookings() {
         return bookingService.getAllBookings();
+    }
+
+    @GetMapping("/search/by-room-id/{id}")
+    public BookingResponseDTO getBookingByRoomId(@PathVariable Long id) {
+        return bookingService.getBookingByRoomId(id);
     }
 
     @PostMapping("/new")

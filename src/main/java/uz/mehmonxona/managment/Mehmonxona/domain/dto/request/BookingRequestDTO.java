@@ -6,7 +6,6 @@ import uz.mehmonxona.managment.Mehmonxona.domain.entity.Room;
 import java.time.LocalDateTime;
 
 public class BookingRequestDTO {
-    private Long id;
     private Customer customer;
     private Room room;
     private Double price;
@@ -37,14 +36,6 @@ public class BookingRequestDTO {
 
     public void setPaymentMethod(String paymentMethod) {
         this.paymentMethod = paymentMethod;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public Customer getCustomer() {
